@@ -10,8 +10,38 @@ import json
 from django.http import HttpResponse
 from PIL import Image
 from io import BytesIO
+import base64
+import soundfile as sf
 
 
+@csrf_exempt 
+def receive_audio(request):
+    # Handle the POST request and access the audio data here
+    if request.method == 'POST':
+        audio_data = request.body
+        print("received body")
+        audio_data_decoded = base64.b64decode(audio_data)
+        print("received decode")
+        audio_data_info = sf.info(audio_data_decoded)
+        sf.write("audio_file.wav", audio_data_decoded, audio_data_info.samplerate)
+        print("audio_data_info")
+
+        return HttpResponse("Audio received")
+
+
+
+
+@csrf_exempt 
+def FB_transcribe(request):
+    """this function execute the hugging_face api to transcribe audio"""
+
+    if request.method == 'POST':
+        audio_data = request.body
+        # audio_data_decoded = base64.b64decode(audio_data)
+        audio_data.decode('utf-8')
+        print("decoded")
+        output = models.transcription_model(audio_data_decoded)
+        return output
 
 
 ## test this api tomorrow 
@@ -22,6 +52,7 @@ def Diffuser_function(request):
     if request.method == 'POST':
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
+        
         text = body.get('text', "")
         output = models.Image_generation(text)
         # img = open('output', 'rb')
@@ -31,7 +62,21 @@ def Diffuser_function(request):
 
 
 
+@csrf_exempt 
+def Openai_Generator_image_function(request):
+    """this function execute the openai api to generate images"""
 
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        # print(body, type(body))
+        # text = body["text"]
+        text = body.get('text', "")
+        output = models.Openai_Generator_image(text)
+        # img = open('output', 'rb')
+        # image = FileResponse(img)
+        # image=Image.open(BytesIO(output))
+        return output
 
 
 ## i need to code solution that make the model continue it's inference until the session ended, continue working on result, chatting 

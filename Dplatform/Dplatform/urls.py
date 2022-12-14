@@ -23,8 +23,11 @@ urlpatterns = [
     path('Germany_translator', views.Germany_Translator_function),
     path('summarization', views.summarizer_function),
     path('text_generation', views.text_generation_function),
-    path('chat', views.conversational_function),
+    # path('chat', views.conversational_function),
     path('generating_image', views.Diffuser_function),
     path("talk_to_GPT", views.ChatGPT_function),
-    path("french_translator", views.french_Translator_function)
+    path("french_translator", views.french_Translator_function),
+    path("openai_image", views.Openai_Generator_image_function),
+    path("transcription",views.receive_audio),
+    path("transcriptionFB",views.FB_transcribe),
 ]

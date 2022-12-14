@@ -3,12 +3,16 @@ from diffusers import StableDiffusionPipeline
 import torch
 import json
 import openai
+from PIL import Image
 
 
 
 
 # My OpenAI API key
 openai.api_key = "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"
+# My hugging_face API key
+headers = {"Authorization": "Bearer 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"}
+
 
 # Use the text generation function to generate a response
 def ChatGPT(payload) :
@@ -17,28 +21,24 @@ def ChatGPT(payload) :
     prompt=json.dumps(payload),
     max_tokens=4000,
     temperature=0.2,)
-    return (response["choices"][0]["image"]) 
+    return (response["choices"][0]["text"]) 
 
 
      
 
-# def TranslatorGPT(payload):
-#     # Use the translation function to generate a translated text
-#     response = openai.Completion.create(
-#         engine="text-davinci-002",
-#         prompt=json.dumps(payload),
-#         max_tokens=1024,
-#         temperature=0.5,
-#         n = 1,
-#         stop = "##",
-#         languages=["en", "fr"],
-#         models=["translation"],)
-#     generated_translation = response["choices"][0]["text"]
-#     return generated_translation
-import requests
+
+API_URL = "https://api-inference.huggingface.co/models/facebook/wav2vec2-large-960h-lv60-self"
+
+
+def transcription_model(payload):
+    with open(payload, "rb") as f:
+        data = f.read()
+        # data.decode('utf-16')
+    response = requests.request("POST", API_URL, headers=headers, data=data)
+    return json.loads(response.content.decode("utf-8"))
+
 
 API_URL = "https://api-inference.huggingface.co/models/Helsinki-NLP/opus-mt-en-fr"
-
 def french_translator(payload):
 	response = requests.post(API_URL, headers=headers, json=payload)
 	return response.json()
@@ -48,7 +48,6 @@ def french_translator(payload):
 
 
 API_URL_translator = "https://api-inference.huggingface.co/models/t5-small"
-headers = {"Authorization": "Bearer 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"}
 
 def Translator(payload):
 	response = requests.post(API_URL_translator, headers=headers, json=payload)
@@ -96,8 +95,29 @@ def Image_generation(payload):
     # image.save("name.png")
     return(image)
 
+def Openai_Generator_image(payload):
+    response = openai.Image.create(
+    prompt=json.dumps(payload),
+    n=1,
+    size="256x256")
+    image_url = response['data'][0]['url']
+    return image_url
 
 
+
+# def TranslatorGPT(payload):
+#     # Use the translation function to generate a translated text
+#     response = openai.Completion.create(
+#         engine="text-davinci-002",
+#         prompt=json.dumps(payload),
+#         max_tokens=1024,
+#         temperature=0.5,
+#         n = 1,
+#         stop = "##",
+#         languages=["en", "fr"],
+#         models=["translation"],)
+#     generated_translation = response["choices"][0]["text"]
+#     return generated_translation
 # API_URL_conversational = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
 # headers = {"Authorization": "Bearer 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"}
 

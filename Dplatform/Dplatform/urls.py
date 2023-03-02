@@ -15,19 +15,34 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
+# from My_plat.views import AuthViewSet
 from My_plat import views
+
+# from django.urls import include
+# from rest_framework import routers
+
+# router = routers.DefaultRouter()
+# router.register(r'auth', AuthViewSet, basename='auth')
+
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('Germany_translator', views.Germany_Translator_function),
+    path('auth/login', views.loginn),
+    path('auth/register', views.register),
+    path("talk_to_GPT", views.ChatGPT_function),           
+    path('Germany_translator', views.Germany_Translator_function),     
+    path("french_translator", views.french_Translator_function),
     path('summarization', views.summarizer_function),
     path('text_generation', views.text_generation_function),
-    # path('chat', views.conversational_function),
-    path('generating_image', views.Diffuser_function),
-    path("talk_to_GPT", views.ChatGPT_function),
-    path("french_translator", views.french_Translator_function),
-    path("openai_image", views.Openai_Generator_image_function),
+    path('Text_to_Image', views.generate_image),
+    path('chat', views.conversational_function),
+
+
+    path("arabic_translator", views.arabic_Translator_function),
+    path('3D_points', views.generate_3d_points),
+
+
     path("transcription",views.receive_audio),
     path("transcriptionFB",views.FB_transcribe),
 ]

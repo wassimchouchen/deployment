@@ -1,13 +1,14 @@
 import requests
-from diffusers import StableDiffusionPipeline
 import torch
 import json
 import openai
-from PIL import Image
+from PIL import Image  # Import the required libraries
+import base64
+from io import BytesIO
+import transformers
+from transformers import GPT2Tokenizer, GPT2LMHeadModel
 
-
-
-
+from diffusers import StableDiffusionPipeline
 # My OpenAI API key
 openai.api_key = "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"
 # My hugging_face API key
@@ -53,6 +54,19 @@ def Translator(payload):
 	response = requests.post(API_URL_translator, headers=headers, json=payload)
 	return response.json()
 
+API_URL_en2ar  = "https://api.openai.com/v1/engines/davinci/jobs"
+
+
+def Translaten2ar(payload):
+    # payload = {
+    #     "model": "text-davinci-002",
+    #     "prompt": f"translate this to arabic: {text}",
+    #     "max_tokens": 1024,
+    #     "temperature": 0.5
+    # }
+	response = requests.post(API_URL_en2ar, headers=headers, json=payload)
+	return response.json()
+
 
 
 
@@ -84,44 +98,22 @@ def QA(payload):
 	
 
 
+
+
+
+
+
 def Image_generation(payload):
-    model_id = "runwayml/stable-diffusion-v1-5"
-    pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16, revision="fp16")
-    pipe = pipe.to("cuda")
+# Load the pre-trained model
+    model = GPT2LMHeadModel.from_pretrained('gpt2')
+    data = json.dumps(payload)
+    # Generate images using the model
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+    output = model.generate(data, max_length=1024, top_k=50, top_p=0.9, temperature=0.7,pad_token_id=50256)
+    # Tokenize the output using the GPT2Tokenizer
+   
+    tokens = tokenizer.decode(output, skip_special_tokens=True)
+    # Convert the tokens back into the original image format
+    original_image = decode_tokens(tokens)
+    return original_image
 
-    prompt = json.dumps(payload)
-    image = pipe(prompt).images[0]  
-    
-    # image.save("name.png")
-    return(image)
-
-def Openai_Generator_image(payload):
-    response = openai.Image.create(
-    prompt=json.dumps(payload),
-    n=1,
-    size="256x256")
-    image_url = response['data'][0]['url']
-    return image_url
-
-
-
-# def TranslatorGPT(payload):
-#     # Use the translation function to generate a translated text
-#     response = openai.Completion.create(
-#         engine="text-davinci-002",
-#         prompt=json.dumps(payload),
-#         max_tokens=1024,
-#         temperature=0.5,
-#         n = 1,
-#         stop = "##",
-#         languages=["en", "fr"],
-#         models=["translation"],)
-#     generated_translation = response["choices"][0]["text"]
-#     return generated_translation
-# API_URL_conversational = "https://api-inference.huggingface.co/models/facebook/blenderbot-400M-distill"
-# headers = {"Authorization": "Bearer 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"}
-
-# def conversational(payload):
-# 	response = requests.post(API_URL_conversational, headers=headers, json=payload)
-#     result=response.json()
-#     return (result) 

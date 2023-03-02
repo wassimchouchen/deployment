@@ -26,6 +26,7 @@ SECRET_KEY = 'django-insecure-wuzt@e+jzto$$-!##db=#j66#*pe97+pfyhz99d^lw(ol#ed)w
 DEBUG = True
 
 ALLOWED_HOSTS = []
+APPEND_SLASH = False
 
 
 # Application definition
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'Dplatform',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'Dplatform.urls'

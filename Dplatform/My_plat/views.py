@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 from My_plat import models
+from api import *
 import json
 from django.http import HttpResponse
 from PIL import Image
@@ -108,7 +109,81 @@ def loginn(request):
         return JsonResponse({"error": "Invalid credentials."}, status=400)
 
 #######################################################################################################################
+def chatbot(request):
+    if request.method == 'POST':
+        payload = request.POST.get('payload')
+        chat_log = request.POST.get('chat_log')
+        if not chat_log:
+            # Start a new conversation
+            chat_log = payload + '\n'
+        else:
+            # Continue an existing conversation
+            chat_log += 'user: ' + payload + '\n'
+        # Generate a response using GPT-3
+        # response = openai.Completion.create(
+        #     engine='davinci',
+        #     prompt=chat_log,
+        #     max_tokens=1024,
+        #     n=1,
+        #     stop=None,
+        #     temperature=0.7,
+        # )
+        response = models.ChatGPT(chat_log)
+        # Append the response to the chat log
+        chat_log += 'bot: ' + response + '\n'
 
+        # Return the chat log as a JSON response
+        return JsonResponse({'chat_log': chat_log})
+
+
+import openai
+from django.http import JsonResponse
+from .models import Conversation
+
+openai.api_key = 'YOUR_API_KEY'
+
+def chatbotv2(request):
+    if request.method == 'POST':
+        payload = request.POST.get('payload')
+        conversation_id = request.POST.get('conversation_id')
+
+        if not conversation_id:
+            # Start a new conversation
+            conversation = Conversation.objects.create(chat_log='')
+        else:
+            # Retrieve the conversation from the database
+            conversation = Conversation.objects.get(id=conversation_id)
+
+        # Append the user's message to the chat log
+        conversation.chat_log += 'user: ' + payload + '\n'
+
+        # Generate a response using GPT-3 and the conversation history/context
+        response = openai.Completion.create(
+            engine='davinci',
+            prompt=conversation.chat_log,
+            max_tokens=1024,
+            n=1,
+            stop=None,
+            temperature=0.7,
+        )
+
+        # Append the response to the chat log
+        conversation.chat_log += 'bot: ' + response.choices[0].text + '\n'
+
+        # Save the conversation to the database
+        conversation.save()
+
+        # Return the conversation ID and chat log as a JSON response
+        return JsonResponse({'conversation_id': conversation.id, 'chat_log': conversation.chat_log})
+
+
+
+
+
+
+
+
+###############################################################################################################
 def generate_3d(request):
     # ...
     if request.method == 'POST':
@@ -257,6 +332,20 @@ def ChatGPT_function(request):
         
         response = models.ChatGPT(text)
         return HttpResponse(response)
+    
+@csrf_exempt
+def ChatGPT35(request):
+    """this function execute the conversational api but with chatGPT of OpenAI """
+
+    if request.method == 'POST':
+        body_unicode = request.body.decode('utf-8')
+        body = json.loads(body_unicode)
+        text = body.get('text', "")
+        
+        response = models.GPT35(text)
+        return HttpResponse(response)
+
+
 
 
 

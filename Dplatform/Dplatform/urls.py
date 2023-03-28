@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 # from My_plat.views import AuthViewSet
-from My_plat import views
+from My_plat import views, exe, log_sign
 
 # from django.urls import include
 # from rest_framework import routers
@@ -28,21 +28,22 @@ from My_plat import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/login', views.loginn),
-    path('auth/register', views.register),
-    path("talk_to_GPT", views.ChatGPT_function),           
-    path('Germany_translator', views.Germany_Translator_function),     
-    path("french_translator", views.french_Translator_function),
-    path('summarization', views.summarizer_function),
-    path('text_generation', views.text_generation_function),
-    path('Text_to_Image', views.generate_image),
-    path('chat', views.conversational_function),
+    path('auth/login', log_sign.loginn),
+    path('auth/register', log_sign.register),
+    path('turbo', exe.GPT_turbo),    
+    path("talk_to_GPT", exe.ChatGPT_function),    
+    path('chat', exe.conversational_function),    
+    path('translator', exe.Translation),     
+    path('summary', exe.summarizer_function),
+    path('text_gen', exe.text_generation_function),
+    path('Text_to_Image', exe.generate_image),
+    path("transcriptionn",exe.transcribe_view),
 
 
-    path("arabic_translator", views.arabic_Translator_function),
     path('3D_points', views.generate_3d_points),
 
 
-    path("transcription",views.receive_audio),
-    path("transcriptionFB",views.FB_transcribe),
+
+
+    # path("transcriptionFB",views.FB_transcribe),
 ]

@@ -85,9 +85,9 @@ def text_generation_function(request):
         text = body.get('text', "")
         print(previous_response)
         if previous_response=="":
-             response = apiii.text_generation(text)
+             response = apiii.GPT35(text)
         else:
-             response = apiii.text_generation(previous_response)
+             response = apiii.GPT35(previous_response)
     
         previous_response = response[0]["generated_text"]
         
@@ -165,7 +165,7 @@ def Translation(request):
         else:
             return HttpResponse("please select a language")
         
-        return HttpResponse(translated[0]["translation_text"])
+        return HttpResponse(translated)
     
 
       

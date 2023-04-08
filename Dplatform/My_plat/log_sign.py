@@ -1,21 +1,13 @@
 from django.contrib.auth import login
 import jwt
 from django.contrib.auth import authenticate
-import requests
 from django.contrib.auth.models import User
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
 from django.views.decorators.csrf import csrf_exempt
 import json
-from django.http import HttpResponse
-import requests
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
-from django.contrib.auth import get_user_model
+
+
 ##authentification class for register and login(including creating user)
 
 class UserSerializer(serializers.Serializer):

@@ -32,6 +32,7 @@ APPEND_SLASH = False
 # Application definition
 
 INSTALLED_APPS = [
+    'My_plat.app.GenConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

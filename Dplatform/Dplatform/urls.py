@@ -37,13 +37,9 @@ urlpatterns = [
     path('summary', exe.summarizer_function),
     path('text_gen', exe.text_generation_function),
     path('Text_to_Image', exe.generate_image),
-    path("transcriptionn",exe.transcribe_view),
+    path("transcription",exe.transcribe_view),
 
 
-    path('3D_points', views.generate_3d_points),
-
-
-
-
-    # path("transcriptionFB",views.FB_transcribe),
+    path('3D_points', views.generate_3d_points), 
+    
 ]

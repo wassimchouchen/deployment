@@ -1,17 +1,10 @@
-import subprocess
 import requests
-import torch
 import json
 import openai
-from PIL import Image  # Import the required libraries
-import base64
-from io import BytesIO
-import transformers
 from transformers import GPT2Tokenizer, GPT2LMHeadModel
-import whisper
-from diffusers import StableDiffusionPipeline
+
 # My OpenAI API key
-openai.api_key = "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"
+openai.api_key = "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"
 # My hugging_face API key
 headers = {"Authorization": "Bearer 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"}
 
